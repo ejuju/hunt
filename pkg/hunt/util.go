@@ -1,6 +1,9 @@
 package hunt
 
-import "math/rand"
+import (
+	"io"
+	"math/rand"
+)
 
 var SampleUserAgents = []string{
 	"Mozilla/5.0 (Linux; Android 8.0.0; SM-G960F Build/R16NW) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36",
@@ -18,3 +21,46 @@ var SampleUserAgents = []string{
 }
 
 func RandomUserAgent() string { return SampleUserAgents[rand.Intn(len(SampleUserAgents))] }
+
+type LogType string
+
+const (
+	LogSuccess = LogType("success")
+	LogError   = LogType("error")
+	LogWarning = LogType("warning")
+	LogDebug   = LogType("debug")
+)
+
+type Logger func(typ LogType, msg string)
+
+func NoLog() Logger { return func(typ LogType, s string) {} }
+
+func LogTo(w io.Writer, typs ...LogType) Logger {
+	return func(typ LogType, msg string) {
+		for _, showType := range typs {
+			if showType == typ {
+				switch typ {
+				default:
+					io.WriteString(w, msg)
+				case LogSuccess:
+					io.WriteString(w, "\033[32m"+msg+"\033[0m")
+				case LogError:
+					io.WriteString(w, "\033[31m"+msg+"\033[0m")
+				case LogWarning:
+					io.WriteString(w, "\033[33m"+msg+"\033[0m")
+				case LogDebug:
+					io.WriteString(w, msg)
+				}
+			}
+		}
+	}
+}
+
+func LogAllTo(w io.Writer) Logger {
+	return LogTo(w,
+		LogSuccess,
+		LogError,
+		LogWarning,
+		LogDebug,
+	)
+}
