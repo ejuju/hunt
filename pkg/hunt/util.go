@@ -31,11 +31,13 @@ const (
 	LogDebug   = LogType("debug")
 )
 
+var AllLogTypes = []LogType{LogSuccess, LogError, LogWarning, LogDebug}
+
 type Logger func(typ LogType, msg string)
 
 func NoLog() Logger { return func(typ LogType, s string) {} }
 
-func LogTo(w io.Writer, typs ...LogType) Logger {
+func LogToTTY(w io.Writer, typs ...LogType) Logger {
 	return func(typ LogType, msg string) {
 		for _, showType := range typs {
 			if showType == typ {
@@ -54,13 +56,4 @@ func LogTo(w io.Writer, typs ...LogType) Logger {
 			}
 		}
 	}
-}
-
-func LogAllTo(w io.Writer) Logger {
-	return LogTo(w,
-		LogSuccess,
-		LogError,
-		LogWarning,
-		LogDebug,
-	)
 }

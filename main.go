@@ -12,7 +12,7 @@ func init() { log.SetFlags(log.Ltime | log.Lshortfile) }
 
 func main() {
 	inputDomain := os.Args[1]
-	log := hunt.LogAllTo(os.Stdout)
+	log := hunt.LogToTTY(os.Stdout, hunt.AllLogTypes...)
 
 	// Scan domain name
 	domainInfo := &hunt.DomainInfo{Name: inputDomain}
@@ -22,7 +22,7 @@ func main() {
 		hunt.LookupTextRecords(log),
 		hunt.LookupMailServers(log),
 		hunt.LookupNameServers(log),
-		hunt.LookupWHOIS(hunt.LogTo(os.Stdout, hunt.LogError), time.Second),
+		hunt.LookupWHOIS(hunt.LogToTTY(os.Stdout, hunt.LogError), time.Second),
 	)
 
 	// Scan IP address (including TCP ports)
@@ -32,7 +32,7 @@ func main() {
 	ipAddrInfo := &hunt.IPAddrInfo{Addr: domainInfo.IPAddresses[0]}
 	hunt.ScanIPAddress(ipAddrInfo,
 		hunt.ScanIPAddrDomains(log),
-		hunt.ScanIPAddrTCPPorts(hunt.LogTo(os.Stdout, hunt.LogSuccess), hunt.CommonPorts(), time.Second),
+		hunt.ScanIPAddrTCPPorts(hunt.LogToTTY(os.Stdout, hunt.LogSuccess), hunt.CommonPorts(), time.Second),
 	)
 
 	// Scan website
@@ -40,6 +40,6 @@ func main() {
 	tryPaths := []string{"/", "/robots.txt"}
 	hunt.ScanWebsite(websiteInfo,
 		hunt.ScanWebsiteRobotsTXT(hunt.NoLog(), ""),
-		hunt.ScanWebsitePages(hunt.LogTo(os.Stdout, hunt.LogSuccess, hunt.LogError), "", tryPaths),
+		hunt.ScanWebsitePages(hunt.LogToTTY(os.Stdout, hunt.LogSuccess, hunt.LogError), "", tryPaths),
 	)
 }
