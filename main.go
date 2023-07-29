@@ -11,27 +11,34 @@ import (
 func init() { log.SetFlags(log.Ltime | log.Lshortfile) }
 
 func main() {
-	inputDomain := "juliensellier.com"
-	notify := hunt.LogAllTo(os.Stdout)
+	inputDomain := os.Args[1]
+	log := hunt.LogAllTo(os.Stdout)
 
-	// Collect domain info
+	// Scan domain name
 	domainInfo := &hunt.DomainInfo{Name: inputDomain}
 	hunt.ScanDomain(domainInfo,
-		hunt.LookupIPAddresses(notify),
-		hunt.LookupCanonicalName(notify),
-		hunt.LookupTextRecords(notify),
-		hunt.LookupMailServers(notify),
-		hunt.LookupNameServers(notify),
-		hunt.LookupWHOIS(hunt.NoLog(), time.Second),
+		hunt.LookupIPAddresses(log),
+		hunt.LookupCanonicalName(log),
+		hunt.LookupTextRecords(log),
+		hunt.LookupMailServers(log),
+		hunt.LookupNameServers(log),
+		hunt.LookupWHOIS(hunt.LogTo(os.Stdout, hunt.LogError), time.Second),
 	)
 
-	// Collect IP address info
+	// Scan IP address (including TCP ports)
 	if len(domainInfo.IPAddresses) == 0 {
-		notify(hunt.LogWarning, "no IP address found for this domain")
+		log(hunt.LogWarning, "no IP address found for this domain")
 	}
 	ipAddrInfo := &hunt.IPAddrInfo{Addr: domainInfo.IPAddresses[0]}
 	hunt.ScanIPAddress(ipAddrInfo,
-		hunt.ScanIPAddrDomains(notify),
-		hunt.ScanIPAddrTCPPorts(notify, hunt.CommonPorts(), time.Second),
+		hunt.ScanIPAddrDomains(log),
+		hunt.ScanIPAddrTCPPorts(hunt.LogTo(os.Stdout, hunt.LogSuccess), hunt.CommonPorts(), time.Second),
+	)
+
+	// Scan website
+	websiteInfo := &hunt.WebsiteInfo{Host: inputDomain}
+	hunt.ScanWebsite(websiteInfo,
+		hunt.ScanWebsiteRobotsTXT(hunt.NoLog(), ""),
+		hunt.ScanWebsitePages(log, "", []string{"/", "/robots.txt"}),
 	)
 }

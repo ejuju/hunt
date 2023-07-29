@@ -127,7 +127,6 @@ func CommonPorts() []int {
 		}
 		out = append(out, port)
 	}
-	fmt.Println(out)
 	return out
 }
 
@@ -214,10 +213,12 @@ var CommonTCPPorts = [MaxPortNumber][]Service{
 	2377: {SrvDocker},
 	3306: {SrvMySQL},
 	5009: {SrvVNC},
-	8080: {SrvHTTP},
 	9100: {SrvNodeExporter},
 
-	// Human-friendly ports
+	// Common ports chosen by developers
+	8080: {SrvHTTP},
+	8081: {SrvHTTP},
+	4200: {SrvHTTP},
 	1111: {SrvHTTP},
 	2222: {SrvHTTP},
 	3333: {SrvHTTP},
