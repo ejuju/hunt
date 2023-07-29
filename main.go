@@ -37,8 +37,9 @@ func main() {
 
 	// Scan website
 	websiteInfo := &hunt.WebsiteInfo{Host: inputDomain}
+	tryPaths := []string{"/", "/robots.txt"}
 	hunt.ScanWebsite(websiteInfo,
 		hunt.ScanWebsiteRobotsTXT(hunt.NoLog(), ""),
-		hunt.ScanWebsitePages(log, "", []string{"/", "/robots.txt"}),
+		hunt.ScanWebsitePages(hunt.LogTo(os.Stdout, hunt.LogSuccess, hunt.LogError), "", tryPaths),
 	)
 }

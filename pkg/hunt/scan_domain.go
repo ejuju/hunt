@@ -33,7 +33,7 @@ func LookupIPAddresses(log Logger) DomainScanner {
 		net.DefaultResolver.StrictErrors = true
 		recs, err := net.LookupIP(info.Name)
 		if err != nil {
-			log(LogError, fmt.Sprintf("%q: lookup A and AAAA: %s", info.Name, err))
+			log(LogError, fmt.Sprintf("%q: lookup A and AAAA: %s\n", info.Name, err))
 			return
 		}
 		info.IPAddresses = recs
@@ -47,13 +47,13 @@ func LookupWHOIS(log Logger, timeout time.Duration) DomainScanner {
 	return func(info *DomainInfo) {
 		if timeout <= 0 {
 			timeout = 20 * time.Second
-			log(LogDebug, fmt.Sprintf("%q: set WHOIS timeout to %s", info.Name, timeout))
+			log(LogDebug, fmt.Sprintf("%q: set WHOIS timeout to %s\n", info.Name, timeout))
 		}
 		ctx, cancel := context.WithTimeout(context.Background(), timeout)
 		defer cancel()
 		res, err := exec.CommandContext(ctx, "whois", info.Name).CombinedOutput()
 		if err != nil {
-			log(LogError, fmt.Sprintf("%q: exec whois: %s", info.Name, err))
+			log(LogError, fmt.Sprintf("%q: exec whois: %s\n", info.Name, err))
 			return
 		}
 		info.WHOIS = res
@@ -79,7 +79,7 @@ func LookupMailServers(log Logger) DomainScanner {
 	return func(info *DomainInfo) {
 		recs, err := net.LookupMX(info.Name)
 		if err != nil {
-			log(LogError, fmt.Sprintf("%q: lookup MX records: %s", info.Name, err))
+			log(LogError, fmt.Sprintf("%q: lookup MX records: %s\n", info.Name, err))
 			return
 		}
 		info.MailServers = recs
@@ -93,7 +93,7 @@ func LookupTextRecords(log Logger) DomainScanner {
 	return func(info *DomainInfo) {
 		recs, err := net.LookupTXT(info.Name)
 		if err != nil {
-			log(LogError, fmt.Sprintf("%q: lookup TXT records: %s", info.Name, err))
+			log(LogError, fmt.Sprintf("%q: lookup TXT records: %s\n", info.Name, err))
 			return
 		}
 		info.TextRecords = recs
@@ -107,7 +107,7 @@ func LookupCanonicalName(log Logger) DomainScanner {
 	return func(info *DomainInfo) {
 		rec, err := net.LookupCNAME(info.Name)
 		if err != nil {
-			log(LogError, fmt.Sprintf("%q: lookup CNAME: %s", info.Name, err))
+			log(LogError, fmt.Sprintf("%q: lookup CNAME: %s\n", info.Name, err))
 			return
 		}
 		info.CanonicalName = rec
