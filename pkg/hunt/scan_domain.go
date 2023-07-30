@@ -57,7 +57,7 @@ func LookupWHOIS(log Logger, timeout time.Duration) DomainScanner {
 			return
 		}
 		info.WHOIS = res
-		log(LogSuccess, "---\nWHOIS:\n"+string(res)+"\n---\n")
+		log(LogSuccess, "WHOIS:\n"+string(res)+"\n---\n")
 	}
 }
 

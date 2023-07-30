@@ -38,6 +38,10 @@ func ScanWebsiteRobotsTXT(log Logger, ua string) WebsiteScanner {
 			return
 		}
 		defer res.Body.Close()
+		if res.StatusCode != http.StatusOK {
+			log(LogDebug, fmt.Sprintf("%q: read robotsTXT status: %d\n", info.Host, res.StatusCode))
+			return
+		}
 		robotsTXT, err := io.ReadAll(res.Body)
 		if err != nil {
 			log(LogError, fmt.Sprintf("%q: read robotsTXT response: %s\n", info.Host, err))

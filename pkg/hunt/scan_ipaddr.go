@@ -45,9 +45,9 @@ func ScanIPAddrTCPPorts(log Logger, ports []int, connTimeout time.Duration, find
 				continue
 			}
 			if tcpAddrInfo.State == TCPPortStateOpen {
-				log(LogSuccess, fmt.Sprintf("OPEN PORT: %s\n", tcpAddrInfo))
+				log(LogSuccess, fmt.Sprintf("%s\n", tcpAddrInfo))
 			} else {
-				log(LogWarning, fmt.Sprintf("REFUSED: %s\n", tcpAddrInfo))
+				log(LogDebug, fmt.Sprintf("%s\n", tcpAddrInfo))
 			}
 		}
 	}

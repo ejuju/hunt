@@ -3,6 +3,7 @@ package hunt
 import (
 	"io"
 	"math/rand"
+	"os"
 )
 
 var SampleUserAgents = []string{
@@ -25,10 +26,10 @@ func RandomUserAgent() string { return SampleUserAgents[rand.Intn(len(SampleUser
 type LogType string
 
 const (
-	LogSuccess = LogType("success")
-	LogError   = LogType("error")
-	LogWarning = LogType("warning")
-	LogDebug   = LogType("debug")
+	LogSuccess = LogType("SUCCESS")
+	LogError   = LogType("ERROR")
+	LogWarning = LogType("WARNING")
+	LogDebug   = LogType("DEBUG")
 )
 
 var AllLogTypes = []LogType{LogSuccess, LogError, LogWarning, LogDebug}
@@ -54,6 +55,36 @@ func LogToTTY(w io.Writer, typs ...LogType) Logger {
 					io.WriteString(w, msg)
 				}
 			}
+		}
+	}
+}
+
+func LogAllToFile(fpath string) Logger {
+	f, err := os.OpenFile(fpath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	return func(typ LogType, msg string) {
+		prefix := ""
+		switch typ {
+		case LogDebug:
+			prefix = "🔎"
+		case LogError:
+			prefix = "❌"
+		case LogSuccess:
+			prefix = "🟩"
+		case LogWarning:
+			prefix = "🟡"
+		}
+		prefix += " "
+		f.Write([]byte(prefix + msg))
+	}
+}
+
+func LogTo(loggers ...Logger) Logger {
+	return func(typ LogType, msg string) {
+		for _, log := range loggers {
+			log(typ, msg)
 		}
 	}
 }
