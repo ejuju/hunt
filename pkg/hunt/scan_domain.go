@@ -65,7 +65,7 @@ func LookupNameServers(log Logger) DomainScanner {
 	return func(info *DomainInfo) {
 		recs, err := net.LookupNS(info.Name)
 		if err != nil {
-			log(LogSuccess, fmt.Sprintf("%q: lookup NS: %s\n", info.Name, err))
+			log(LogError, fmt.Sprintf("%q: lookup NS: %s\n", info.Name, err))
 			return
 		}
 		info.NameServers = recs

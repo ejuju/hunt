@@ -47,7 +47,7 @@ func ScanWebsiteRobotsTXT(log Logger, ua string) WebsiteScanner {
 			log(LogError, fmt.Sprintf("%q: read robotsTXT response: %s\n", info.Host, err))
 			return
 		}
-		log(LogSuccess, string(robotsTXT)+"\n")
+		log(LogSuccess, "Robots.txt:\n"+string(robotsTXT)+"\n---\n")
 		info.RobotsTXT = robotsTXT
 	}
 }
