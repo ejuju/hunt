@@ -64,7 +64,7 @@ func CollectTCPAddrInfo(info *TCPAddrInfo, connTimeout time.Duration, finders ..
 func DetectHTTP(httpHost string, ua string) TCPAddrScanner {
 	return func(info *TCPAddrInfo, conn net.Conn) {
 		if httpHost == "" {
-			panic(errors.New("HTTP host is mandatory"))
+			httpHost = info.Addr.IP.String()
 		}
 		if ua == "" {
 			ua = RandomUserAgent()

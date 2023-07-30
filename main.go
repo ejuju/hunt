@@ -40,6 +40,8 @@ func main() {
 			hunt.LogTo(logAllFile, hunt.LogToTTY(os.Stdout, hunt.LogSuccess)),
 			hunt.CommonPorts(),
 			time.Second,
+			hunt.FindTCPBanner(),
+			hunt.DetectHTTP(inputDomain, ""),
 		),
 	)
 
